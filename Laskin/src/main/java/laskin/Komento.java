@@ -19,6 +19,7 @@ public abstract class Komento implements KomentoInterface {
     protected Button nollaa;
     protected Button undo;
     protected Sovelluslogiikka sovellus;
+    private int edellinenArvo;
     
     public Komento(TextField tuloskentta, TextField syotekentta, Button nollaa, Button undo, Sovelluslogiikka sovellus) {
         this.tuloskentta = tuloskentta;
@@ -30,18 +31,22 @@ public abstract class Komento implements KomentoInterface {
     
     @Override
     public void suorita() {
+        edellinenArvo = sovellus.tulos();
         int tulos = laske();
         tuloskentta.setText("" + tulos);
-        if ( tulos == 0) {
-            nollaa.disableProperty().set(true);
-        } else {
-            nollaa.disableProperty().set(false);
-        }
+        disableNollaaButton(tulos);
+        undo.disableProperty().set(false);
     }
     
     @Override
     public void peru() {
-        
+        tuloskentta.setText("" + edellinenArvo);
+        sovellus.setTulos(edellinenArvo);
+        disableNollaaButton(edellinenArvo);
+    }
+    
+    private void disableNollaaButton(int tulos) {
+        nollaa.disableProperty().set(tulos == 0);
     }
     
     protected abstract int laske();
